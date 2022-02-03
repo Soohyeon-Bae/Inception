@@ -1,4 +1,4 @@
-EDIT : Reproduced from Kangmin Park's 'Inception.py' & 'utils.py'
+EDIT : Reproduced from Kangmin Park's 'Inception.py' and 'utils.py'
 
 # Inception
 
