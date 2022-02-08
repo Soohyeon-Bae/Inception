@@ -28,8 +28,6 @@
     
     ![**CNN 네트워크 자체는 translation equivariance(variance), feature의 위치가 바뀌면 당연히 output에서 해당 feature에 대한 연산결과의 위치도 바뀌기 때문**](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/ff02149d-65be-4bee-a408-ccea213cbba8/Untitled.png)
     
-    **CNN 네트워크 자체는 translation equivariance(variance), feature의 위치가 바뀌면 당연히 output에서 해당 feature에 대한 연산결과의 위치도 바뀌기 때문**
-    
     다음의 과정을 통해 CNN이 translation invariance하게 만들 수 있다.
     
     1. Max pooling
@@ -52,7 +50,6 @@
         
         ![동일 가중치를 모든 픽셀이 공유하면서 local하게 연산하기에 FC layer에서의 output값들도 input image의 local value들의 영향을 받아 특정 사이즈 내에서만 equivariant하게 값이 바뀐다](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/44ec2cfc-39d7-4704-8180-cd099da8eedc/Untitled.png)
         
-        동일 가중치를 모든 픽셀이 공유하면서 local하게 연산하기에 FC layer에서의 output값들도 input image의 local value들의 영향을 받아 특정 사이즈 내에서만 equivariant하게 값이 바뀐다
         
         **각 필터는** image내 어떤 **object의 위치와 상관없이 특정 패턴을 학습**하는 것
         
@@ -60,7 +57,6 @@
         
         ![classification으로 output k가 나오기 위해서는 feature map k에 높은 값이 많으면 되는 것이고 feature map k에 높은 값이 많으려면 channel k와 original image가 비슷한 패턴을 갖고 있어야 한다.](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/97b12dad-6591-4681-919d-05793c1950ff/Untitled.png)
         
-        classification으로 output k가 나오기 위해서는 feature map k에 높은 값이 많으면 되는 것이고 feature map k에 높은 값이 많으려면 channel k와 original image가 비슷한 패턴을 갖고 있어야 한다.
         
         **"즉, object의 위치와 상관없이 패턴이 동일하면 동일한 output을 갖게 된다"**
         
@@ -78,7 +74,6 @@ receptive fieldFig.2(a) : 작은 크기의 conv 레이어라도 많이 쌓이면
 
 ![(왼) Sparse (오) Dense](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/672cd846-29cc-4af7-a132-e329bb349969/Untitled.png)
 
-(왼) Sparse (오) Dense
 
 - 성능 향상을 위해 sparse 매트릭스를 서로 묶어(clustering) 상대적으로 dense한 서브 매트릭스를 만듦
 
@@ -116,7 +111,6 @@ receptive fieldFig.2(a) : 작은 크기의 conv 레이어라도 많이 쌓이면
         
         ![1x1필터를 32개 깔면 output은 spatial dimension은 유지하면서 depth는 32개로 줄어듦](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/16c68c9b-f676-4003-bebe-60b7425d6065/Untitled.png)
         
-        1x1필터를 32개 깔면 output은 spatial dimension은 유지하면서 depth는 32개로 줄어듦
         
 2. 활성화 함수(ReLU) 포함으로 비선형성 강화
 
