@@ -4,13 +4,6 @@
 
 # 코드 구현
 
-102개의 클래스를 가지는 데이터셋을 위한 Inception 코드를 2개 클래스를 가지는 데이터셋에 적용하기 위해서
-
-- `num_of_classes`랑 `units`를 모두 2로 바꿈
-- `BinaryCrossentropy()`로 오차함수 변경
-
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/d5312135-4d00-4945-9973-0eee041c38bb/Untitled.png)
-
 [https://github.com/Soohyeon-Bae/Inception](https://github.com/Soohyeon-Bae/Inception)
 
 # 논문 리뷰
