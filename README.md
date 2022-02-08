@@ -1,6 +1,3 @@
-EDIT : Reproduced from Kangmin Park's 'Inception.py' and 'utils.py'
-
-# Inception
 [CVPR 2015 Open Access Repository](https://www.cv-foundation.org/openaccess/content_cvpr_2015/html/Szegedy_Going_Deeper_With_2015_CVPR_paper.html)
 
 # 코드 구현
@@ -29,8 +26,52 @@ EDIT : Reproduced from Kangmin Park's 'Inception.py' and 'utils.py'
 
 > 최적의 local sparse structure를 구성하고 어떻게 dense components를 구성할 수 있을지
 > 
+
+### **Translation Invariance 가정**
+
+- Input의 위치가 달라져도 output이 동일한 값을 갖는다.
+    
+    ![**CNN 네트워크 자체는 translation equivariance(variance), feature의 위치가 바뀌면 당연히 output에서 해당 feature에 대한 연산결과의 위치도 바뀌기 때문**](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/ff02149d-65be-4bee-a408-ccea213cbba8/Untitled.png)
+    
+    **CNN 네트워크 자체는 translation equivariance(variance), feature의 위치가 바뀌면 당연히 output에서 해당 feature에 대한 연산결과의 위치도 바뀌기 때문**
+    
+    다음의 과정을 통해 CNN이 translation invariance하게 만들 수 있다.
+    
+    1. Max pooling
+        
+        > max-pooling은 대표적인 **small translation invariance**함수이다. 예를 들어 orginal image의 pixel값이 [1, 0, 0, 0]일 때, original image를 각각 translate시킨 A, B는 [0, 0, 0, 1], [0, 1, 0, 0]의 값을 갖고 있다. 이를 2x2 max pooling시키면 모두 동일하게 output으로 1을 갖는다.
+        > 
+        
+        > Max pooling은 k x k filter 사이즈만큼의 값들을 1개의 max값을 치환시킨다. 따라서 k x k 내에서 값들의 위치가 달라져도 모두 동일한 값을 output으로 갖게 된다.
+        > 
+        
+        **"즉, k x k 범위내에서의 translation에 대해서는 invariance하다."**
+        
+    2. Weight sharing & Learn local features
+        
+        > Weight sharing : 동일한 weight를 가진 filter를 sliding window로 연산한다.
+        > 
+        
+        > Learn local features : global이 아닌 local feature들과 연산함으로써 local feature를 학습한다.
+        > 
+        
+        ![동일 가중치를 모든 픽셀이 공유하면서 local하게 연산하기에 FC layer에서의 output값들도 input image의 local value들의 영향을 받아 특정 사이즈 내에서만 equivariant하게 값이 바뀐다](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/44ec2cfc-39d7-4704-8180-cd099da8eedc/Untitled.png)
+        
+        동일 가중치를 모든 픽셀이 공유하면서 local하게 연산하기에 FC layer에서의 output값들도 input image의 local value들의 영향을 받아 특정 사이즈 내에서만 equivariant하게 값이 바뀐다
+        
+        **각 필터는** image내 어떤 **object의 위치와 상관없이 특정 패턴을 학습**하는 것
+        
+    3. Softmax
+        
+        ![classification으로 output k가 나오기 위해서는 feature map k에 높은 값이 많으면 되는 것이고 feature map k에 높은 값이 많으려면 channel k와 original image가 비슷한 패턴을 갖고 있어야 한다.](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/97b12dad-6591-4681-919d-05793c1950ff/Untitled.png)
+        
+        classification으로 output k가 나오기 위해서는 feature map k에 높은 값이 많으면 되는 것이고 feature map k에 높은 값이 많으려면 channel k와 original image가 비슷한 패턴을 갖고 있어야 한다.
+        
+        **"즉, object의 위치와 상관없이 패턴이 동일하면 동일한 output을 갖게 된다"**
+        
+
 1. 성능 향상을 위해 네트워크를 늘리면 오버피팅과 계산량이 크게 증가함 → 네트워크를 **sparse**하게 구성하여 크기를 증가시킴
-2. sparse한 구성은 하드웨어 연산에 비효율적임 →  필터 수준의 sparsity을 사용하지만 dense matrices에 대한 계산으로 하드웨어를 활용하는 아키텍처
+2. sparse한 구성은 하드웨어 연산에 비효율적임 →  필터 수준의 sparsity을 사용하지만 dense matrices에 대한 계산으로 하드웨어를 활용하는 아키텍처(각각의 연산은 sparse하지만 concat해서 묶고 보니 dense하게 되었다.)
 
 ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/0f5c1e16-98b0-425f-9dd8-77e698bef120/Untitled.png)
 
@@ -48,10 +89,11 @@ receptive fieldFig.2(a) : 작은 크기의 conv 레이어라도 많이 쌓이면
 
 # GoogleNet
 
-- receptive field 크기는 224 x 224로 RGB 컬러 채널을 가지며, mean subtraction을 적용
-    
-    → 수용영역이 필터의 크기와 같으면, GoogleNet에서 레이어마다 필터 크기가 아래 제시되어 있는데 여기서 뜻하는 receptive field는 무슨 뜻일까?
-    
+> The size of the receptive field in our network is 224×224 taking RGB color channels with mean subtraction.
+> 
+
+→ 여기서 receptive field는 ‘수용영역’이 아니라 ‘연산이 수행될 공간의 크기’ 정도로 해석하는 게 맞을 것 같음.
+
 - 수용영역(receptive field)
     
     > 출력 레이어의 뉴런 하나에 영향을 미치는 입력 뉴런들의 공간 크기
@@ -87,10 +129,14 @@ receptive fieldFig.2(a) : 작은 크기의 conv 레이어라도 많이 쌓이면
 
 - 이전 층에서 생성된 특성맵을 1x1 conv, 3x3 conv, 5x5 conv, 3x3 maxpooling 한 다음, 얻은 특성맵들을 모두 쌓아 다양한 특성이 도출되도록 함
 - 이에 1x1 conv 레이어를 포함시켜 연산량을 줄임
-- max-pooling하는 이유
+- max-pooling
     
     > 각 window에서 가장 큰 자극만을 선택하는 것
     > 
+    - Input의 위치가 달라져도 output이 동일한 값을 갖도록 하기 위해서 (Translation Invariance)
+- pooling과 convolution 연산 차이점
+    - Convolution의 크기는 연산 필터의 크기
+    - Pooling의 크기는 출력의 크기
 
 ### Global Average Pooling
 
@@ -141,3 +187,7 @@ receptive fieldFig.2(a) : 작은 크기의 conv 레이어라도 많이 쌓이면
     [[DL] 1x1 convolution은 무엇이고 왜 사용할까?](https://euneestella.github.io/research/2021-10-14-why-we-use-1x1-convolution-at-deep-learning/)
     
     [[cs231n] 9 강. CNN architectures](https://bookandmed.tistory.com/58)
+    
+    [[Image Classification] GoogleNet(Inception V1) : Going Deeper with Convolutions](https://kkkkhd.tistory.com/10)
+    
+    [translation invariance 설명 및 정리](https://ganghee-lee.tistory.com/43)
