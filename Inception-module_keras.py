@@ -25,3 +25,5 @@ def inception_module(x, filters_1x1, filters_3x3_reduce, filters_3x3, filters_5x
     output = keras.layers.concatenate([conv_1x1, conv_3x3, conv_5x5, pool_proj], axis=3, name=name)
 
     return output
+
+  
