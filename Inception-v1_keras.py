@@ -98,3 +98,5 @@ if __name__ == "__main__" :
                         epochs=EPOCH_ITER,
                         callbacks=[callbacks],
                         validation_data=(x_valid, y_valid))
+
+    
